@@ -8,4 +8,14 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
     }
   },
+  css: {
+    preprocessorOptions: {
+      less: {
+        modifyVars: {
+          'primary-color': '#8CBDB9',
+        },
+        javascriptEnabled: true,
+      },
+    }
+  }
 })

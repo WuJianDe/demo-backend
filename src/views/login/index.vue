@@ -1,145 +1,126 @@
 <template>
-  <v-container fill-height>
-    <v-row class="justify-center">
-      <v-col lg="5" md="6" sm="7">
-        <v-card elevation="2" outlined>
-          <v-form ref="form" lazy-validation>
-            <v-card-title class="font-weight-bold justify-center"
-              >礼物系统管理后台</v-card-title
+  <a-layout>
+    <a-row
+      type="flex"
+      justify="center"
+      align="middle"
+      style="min-height: 100vh"
+    >
+      <a-col>
+        <a-card title="後台管理" style="width: 450px">
+          <a-form
+            :model="formData"
+            @finish="onFinish"
+            @finishFailed="onFinishFailed"
+          >
+            <a-form-item
+              name="account"
+              :rules="[{ required: true, message: '請輸入使用者名稱!' }]"
             >
-            <v-divider width="90%" class="mx-auto" />
-            <v-card-text>
-              <v-row class="justify-center" no-gutters>
-                <v-col cols="10">
-                  <label>帐号</label>
-                  <v-text-field
-                    v-model.trim="account"
-                    :rules="rules.account"
-                    label="请输入帐号"
-                    prepend-inner-icon="mdi-account"
-                    outlined
-                    dense
-                    solo
-                    flat
-                  />
-                </v-col>
-              </v-row>
-              <v-row class="justify-center" no-gutters>
-                <v-col cols="10">
-                  <label>密码</label>
-                  <v-text-field
-                    @click:append="isShow.password = !isShow.password"
-                    v-model.trim="password"
-                    :append-icon="isShow.password ? 'mdi-eye' : 'mdi-eye-off'"
-                    :type="isShow.password ? 'text' : 'password'"
-                    :rules="rules.password"
-                    label="请输入密码"
-                    prepend-inner-icon="mdi-lock"
-                    outlined
-                    dense
-                    solo
-                    flat
-                  />
-                </v-col>
-              </v-row>
-              <v-row class="justify-center" no-gutters>
-                <v-col cols="10">
-                  <label>OTP</label>
-                  <v-text-field
-                    v-model.trim="otp"
-                    label="请输入OTP"
-                    prepend-inner-icon="mdi-cellphone-lock"
-                    outlined
-                    dense
-                    solo
-                    flat
-                  />
-                </v-col>
-              </v-row>
-            </v-card-text>
-            <v-card-actions class="px-4 mb-5 mt-2">
-              <v-row class="justify-center" no-gutters>
-                <v-col cols="10">
-                  <v-btn
-                    @click="login()"
-                    :loading="isLock.login"
-                    :disabled="isLock.login"
-                    class="login-btn"
-                    elevation="0"
-                    block
-                  >
-                    登⼊
-                    <template v-slot:loader>
-                      <span>登⼊中</span>
-                    </template>
-                  </v-btn>
-                </v-col></v-row
-              >
-            </v-card-actions>
-          </v-form>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+              <a-space direction="vertical" style="width: 100%">
+                <label class="input-label">使用者名稱</label>
+                <a-input
+                  v-model:value.trim="formData.account"
+                  size="large"
+                  placeholder="請輸入使用者名稱"
+                >
+                  <template #prefix>
+                    <user-outlined style="font-size: 20px" />
+                  </template>
+                </a-input>
+              </a-space>
+            </a-form-item>
+            <a-form-item
+              name="password"
+              :rules="[{ required: true, message: '請輸入使用者密碼!' }]"
+            >
+              <a-space direction="vertical" style="width: 100%">
+                <label class="input-label">使用者密碼</label>
+                <a-input-password
+                  v-model:value.trim="formData.password"
+                  size="large"
+                  placeholder="請輸入使用者密碼"
+                  autocomplete="off"
+                >
+                  <template #prefix>
+                    <lock-outlined style="font-size: 20px" /> </template
+                ></a-input-password>
+              </a-space>
+            </a-form-item>
+            <a-form-item style="margin: 0">
+              <div style="display: flex; align-items: center">
+                <a-checkbox v-model:checked="formData.isRememberLoginData"
+                  >記住我的登入資訊</a-checkbox
+                >
+                <div style="flex: 1"></div>
+                <a-button
+                  type="primary"
+                  size="large"
+                  style="width: 90px"
+                  html-type="submit"
+                  >登入</a-button
+                >
+              </div>
+            </a-form-item>
+          </a-form>
+        </a-card>
+      </a-col></a-row
+    >
+  </a-layout>
 </template>
 
-<script>
-import { apiLogin } from "@/api/login";
-export default {
-  name: "login",
-  data() {
+<script lang="ts">
+import { defineComponent, reactive } from "vue";
+import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
+import { useRouter } from "vue-router";
+import { useCookies } from "vue3-cookies";
+import CryptoJS from "@/plugins/crypto.js";
+interface FormData {
+  account: string;
+  password: string;
+  isRememberLoginData: boolean;
+}
+export default defineComponent({
+  components: {
+    UserOutlined,
+    LockOutlined,
+  },
+  setup() {
+    const router = useRouter();
+    const { cookies } = useCookies();
+    const formData = reactive<FormData>({
+      account: "",
+      password: "",
+      isRememberLoginData: false,
+    });
+    if (cookies.get("ac") && cookies.get("pw")) {
+      formData.account = CryptoJS.decrypt(cookies.get("ac"));
+      formData.password = CryptoJS.decrypt(cookies.get("pw"));
+      formData.isRememberLoginData = true;
+    }
+    const onFinish = () => {
+      if (formData.isRememberLoginData) {
+        cookies.set("ac", CryptoJS.encrypt(formData.account), "7d");
+        cookies.set("pw", CryptoJS.encrypt(formData.password), "7d");
+      } else {
+        cookies.remove("ac");
+        cookies.remove("pw");
+      }
+      router.push("/");
+    };
+    const onFinishFailed = (errorInfo: any) => {
+      console.log("欄位錯誤:", errorInfo);
+    };
     return {
-      rules: {
-        account: [(v) => !!v || "请输入帐号"],
-        password: [(v) => !!v || "请输入密码"],
-      },
-      isLock: {
-        login: false,
-      },
-      isShow: {
-        password: false,
-      },
-      account: "vic",
-      password: "Vic123",
-      otp: "",
+      formData,
+      onFinish,
+      onFinishFailed,
     };
   },
-  methods: {
-    login() {
-      if (!this.$refs.form.validate()) {
-        return;
-      }
-      this.isLock.login = true;
-      let form = new FormData();
-      form.append("account", this.account);
-      form.append("password", this.password);
-      form.append("otp", this.otp);
-      apiLogin(form)
-        .then((res) => {
-          console.log(res.data);
-          if (res.data.Status == 0) {
-            // 系統警告訊息(例如:三十天尚未更改密碼)
-            if (res.data.Data != "") {
-              this.$store.commit("message", {
-                type: "error",
-                content: res.data.Data[0],
-              });
-            }
-            this.$router.push("/");
-          } else {
-            this.$store.commit("message", {
-              content: res.data.ErrorMessage,
-              type: "error",
-            });
-          }
-        })
-        .catch((err) => {
-          console.log("登入login:", err);
-        })
-        .finally(() => {
-          this.isLock.login = false;
-        });
-    },
-  },
-};
+});
 </script>
+<style>
+.input-label {
+  font-size: 16px !important;
+}
+</style>

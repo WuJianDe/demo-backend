@@ -74,7 +74,7 @@ import { defineComponent, reactive } from "vue";
 import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
 import { useCookies } from "vue3-cookies";
-import CryptoJS from "@/plugins/crypto.js";
+import CryptoJS from "@/plugins/crypto.ts";
 interface FormData {
   account: string;
   password: string;
@@ -106,7 +106,7 @@ export default defineComponent({
         cookies.remove("ac");
         cookies.remove("pw");
       }
-      router.push("/");
+      router.push("/dashboard");
     };
     const onFinishFailed = (errorInfo: any) => {
       console.log("欄位錯誤:", errorInfo);

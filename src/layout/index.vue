@@ -1,0 +1,122 @@
+<template>
+  <a-layout>
+    <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
+      <div class="logo">Demo</div>
+      <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
+        <a-menu-item key="1">
+          <bar-chart-outlined />
+          <span>儀錶板</span>
+        </a-menu-item>
+        <a-menu-item key="2">
+          <appstore-outlined />
+          <span>版面配置</span>
+        </a-menu-item>
+        <a-menu-item key="3">
+          <file-text-outlined />
+          <span>文章管理</span>
+        </a-menu-item>
+      </a-menu>
+    </a-layout-sider>
+    <a-layout>
+      <a-layout-header class="header">
+        <menu-unfold-outlined
+          v-if="collapsed"
+          class="trigger"
+          @click="() => (collapsed = !collapsed)"
+        />
+        <menu-fold-outlined
+          v-else
+          class="trigger"
+          @click="() => (collapsed = !collapsed)"
+        />
+        <div style="flex: 1" />
+        <a-avatar :src="userImg" :size="40" style="margin: 0 10px"> </a-avatar>
+        <a-dropdown>
+          <a class="ant-dropdown-link" @click.prevent style="font-size: 16px">
+            {{ userName }}
+            <down-outlined style="margin-right: 20px" />
+          </a>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item>
+                <a href="javascript:;">登出</a>
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
+      </a-layout-header>
+      <router-view name="pages" />
+    </a-layout>
+  </a-layout>
+</template>
+<script lang="ts">
+import userImg from "@/assets/images/user.png";
+import {
+  DownOutlined,
+  BarChartOutlined,
+  AppstoreOutlined,
+  FileTextOutlined,
+  MenuUnfoldOutlined,
+  MenuFoldOutlined,
+} from "@ant-design/icons-vue";
+import { useRouter } from "vue-router";
+import { useCookies } from "vue3-cookies";
+import { defineComponent, ref } from "vue";
+import CryptoJS from "@/plugins/crypto.ts";
+export default defineComponent({
+  components: {
+    DownOutlined,
+    BarChartOutlined,
+    AppstoreOutlined,
+    FileTextOutlined,
+    MenuUnfoldOutlined,
+    MenuFoldOutlined,
+  },
+  setup() {
+    const router = useRouter();
+    const { cookies } = useCookies();
+    let userName = ref<string>();
+    if (cookies.get("ac") && cookies.get("pw")) {
+      userName = CryptoJS.decrypt(cookies.get("ac"));
+    } else {
+      router.push("/login");
+    }
+    return {
+      userImg,
+      userName,
+      selectedKeys: ref<string[]>(["1"]),
+      collapsed: ref<boolean>(false),
+    };
+  },
+});
+</script>
+<style>
+.header {
+  background: #fff !important;
+  padding: 0 !important;
+  display: flex;
+  vertical-align: middle;
+  align-items: center;
+}
+.logo {
+  height: 64px;
+  line-height: 64px;
+  background: #e09e50;
+  color: #fff;
+  font-weight: 500;
+  text-align: center;
+  font-size: 26px;
+  letter-spacing: 1px;
+}
+.trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.trigger:hover {
+  color: #8cbdb9;
+}
+</style>

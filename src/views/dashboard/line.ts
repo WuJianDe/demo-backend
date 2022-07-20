@@ -1,24 +1,33 @@
 import { defineComponent, h } from 'vue'
-import { Bar } from 'vue-chartjs'
+
+import { Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
   Tooltip,
-  BarElement,
-  CategoryScale,
+  LineElement,
   LinearScale,
+  PointElement,
+  CategoryScale,
 } from 'chart.js'
 
-ChartJS.register(Tooltip, BarElement, CategoryScale, LinearScale)
+ChartJS.register(
+  Tooltip,
+  LineElement,
+  LinearScale,
+  PointElement,
+  CategoryScale
+)
 
 export default defineComponent({
+  name: 'LineChart',
   components: {
-    Bar
+    Line
   },
   props: {
     chartData: {
-      type: Object,
-      default: {}
-    },
+        type: Object,
+        default: {}
+      },
     width: {
       type: Number,
       default: 200
@@ -31,10 +40,11 @@ export default defineComponent({
   setup(props) {
     const chartOptions = {
       responsive: true,
-      maintainAspectRatio: false,
+      maintainAspectRatio: false
     }
+
     return () =>
-      h(Bar, {
+      h(Line, {
         chartData: props.chartData,
         chartOptions,
         width: props.width,

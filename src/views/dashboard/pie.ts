@@ -1,18 +1,17 @@
 import { defineComponent, h } from 'vue'
-import { Bar } from 'vue-chartjs'
+import { Pie } from 'vue-chartjs'
 import {
   Chart as ChartJS,
   Tooltip,
-  BarElement,
+  ArcElement,
   CategoryScale,
-  LinearScale,
 } from 'chart.js'
 
-ChartJS.register(Tooltip, BarElement, CategoryScale, LinearScale)
+ChartJS.register(Tooltip, ArcElement, CategoryScale)
 
 export default defineComponent({
   components: {
-    Bar
+    Pie
   },
   props: {
     chartData: {
@@ -34,7 +33,7 @@ export default defineComponent({
       maintainAspectRatio: false,
     }
     return () =>
-      h(Bar, {
+      h(Pie, {
         chartData: props.chartData,
         chartOptions,
         width: props.width,

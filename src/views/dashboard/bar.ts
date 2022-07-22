@@ -1,14 +1,18 @@
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, PropType } from 'vue'
 import { Bar } from 'vue-chartjs'
 import {
   Chart as ChartJS,
+  Title,
   Tooltip,
   BarElement,
   CategoryScale,
   LinearScale,
+  Plugin,
+  ChartData,
+  DefaultDataPoint
 } from 'chart.js'
 
-ChartJS.register(Tooltip, BarElement, CategoryScale, LinearScale)
+ChartJS.register(Title, Tooltip, BarElement, CategoryScale, LinearScale)
 
 export default defineComponent({
   components: {
@@ -16,8 +20,14 @@ export default defineComponent({
   },
   props: {
     chartData: {
-      type: Object,
-      default: {}
+      type: Object as PropType<
+        ChartData<'bar', DefaultDataPoint<'bar'>, unknown>
+      >,
+      required: true
+    },
+    chartId: {
+      type: String,
+      default: 'bar-chart'
     },
     width: {
       type: Number,
@@ -27,6 +37,18 @@ export default defineComponent({
       type: Number,
       default: 200
     },
+    cssClasses: {
+      default: '',
+      type: String
+    },
+    styles: {
+      type: Object as PropType<Partial<CSSStyleDeclaration>>,
+      default: () => {}
+    },
+    plugins: {
+      type: Array as PropType<Plugin<'bar'>[]>,
+      default: () => []
+    }
   },
   setup(props) {
     const chartOptions = {
@@ -37,8 +59,12 @@ export default defineComponent({
       h(Bar, {
         chartData: props.chartData,
         chartOptions,
+        chartId: props.chartId,
         width: props.width,
         height: props.height,
+        cssClasses: props.cssClasses,
+        styles: props.styles,
+        plugins: props.plugins
       })
   }
 })

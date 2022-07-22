@@ -74,7 +74,7 @@ import { defineComponent, reactive } from "vue";
 import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
 import { useCookies } from "vue3-cookies";
-import CryptoJS from "@/plugins/crypto.ts";
+import CryptoJS from "@/plugins/crypto";
 interface FormData {
   account: string;
   password: string;

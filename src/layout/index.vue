@@ -3,17 +3,13 @@
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
       <div class="logo">Demo</div>
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
-        <a-menu-item key="1">
+        <a-menu-item key="1" @click="toRouter('dashboard')">
           <bar-chart-outlined />
           <span>儀錶板</span>
         </a-menu-item>
-        <a-menu-item key="2">
+        <a-menu-item key="2" @click="toRouter('data-management')">
           <appstore-outlined />
-          <span>版面配置</span>
-        </a-menu-item>
-        <a-menu-item key="3">
-          <file-text-outlined />
-          <span>文章管理</span>
+          <span>數據管理</span>
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
@@ -39,13 +35,13 @@
           <template #overlay>
             <a-menu>
               <a-menu-item>
-                <a href="javascript:;">登出</a>
+                <a href="javascript:;" @click="toRouter('login')">登出</a>
               </a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
       </a-layout-header>
-      <router-view name="pages" />
+      <router-view name="pages" v-if="isRouterAlive" />
     </a-layout>
   </a-layout>
 </template>
@@ -61,8 +57,8 @@ import {
 } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
 import { useCookies } from "vue3-cookies";
-import { defineComponent, ref } from "vue";
-import CryptoJS from "@/plugins/crypto.ts";
+import { defineComponent, ref, nextTick } from "vue";
+import CryptoJS from "@/plugins/crypto";
 export default defineComponent({
   components: {
     DownOutlined,
@@ -73,6 +69,7 @@ export default defineComponent({
     MenuFoldOutlined,
   },
   setup() {
+    let isRouterAlive = ref<boolean>(true);
     const router = useRouter();
     const { cookies } = useCookies();
     let userName = ref<string>();
@@ -81,11 +78,20 @@ export default defineComponent({
     } else {
       router.push("/login");
     }
+    const toRouter = (path: string) => {
+      isRouterAlive.value = false;
+      nextTick(() => {
+        isRouterAlive.value = true;
+      });
+      router.push(path);
+    };
     return {
+      isRouterAlive,
       userImg,
       userName,
       selectedKeys: ref<string[]>(["1"]),
       collapsed: ref<boolean>(false),
+      toRouter,
     };
   },
 });

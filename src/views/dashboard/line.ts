@@ -1,16 +1,21 @@
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, PropType } from 'vue'
 
 import { Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
+  Title,
   Tooltip,
   LineElement,
   LinearScale,
   PointElement,
   CategoryScale,
+  Plugin,
+  ChartData,
+  DefaultDataPoint
 } from 'chart.js'
 
 ChartJS.register(
+  Title,
   Tooltip,
   LineElement,
   LinearScale,
@@ -19,15 +24,20 @@ ChartJS.register(
 )
 
 export default defineComponent({
-  name: 'LineChart',
   components: {
     Line
   },
   props: {
     chartData: {
-        type: Object,
-        default: {}
-      },
+      type: Object as PropType<
+        ChartData<'line', DefaultDataPoint<'line'>, unknown>
+      >,
+      required: true
+    },
+    chartId: {
+      type: String,
+      default: 'line-chart'
+    },
     width: {
       type: Number,
       default: 200
@@ -36,6 +46,18 @@ export default defineComponent({
       type: Number,
       default: 200
     },
+    cssClasses: {
+      default: '',
+      type: String
+    },
+    styles: {
+      type: Object as PropType<Partial<CSSStyleDeclaration>>,
+      default: () => {}
+    },
+    plugins: {
+      type: Array as PropType<Plugin<'line'>[]>,
+      default: () => []
+    }
   },
   setup(props) {
     const chartOptions = {
@@ -47,8 +69,12 @@ export default defineComponent({
       h(Line, {
         chartData: props.chartData,
         chartOptions,
+        chartId: props.chartId,
         width: props.width,
         height: props.height,
+        cssClasses: props.cssClasses,
+        styles: props.styles,
+        plugins: props.plugins
       })
   }
 })

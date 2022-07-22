@@ -10,4 +10,4 @@ declare module "*.vue" {
   export default component;
 }
 
-declare module 'crypto-js';
+declare module '@/plugins/crypto';

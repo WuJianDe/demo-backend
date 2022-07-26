@@ -1,7 +1,7 @@
 import CryptoJS from "crypto-js";
 
 export default {
-  encrypt(word: String, keyStr: String, ivStr: String) {
+  encrypt(word: string, keyStr: string, ivStr: string) {
     keyStr = keyStr ? keyStr : "absoietlj32fai12";
     ivStr = ivStr ? ivStr : "absoietlj32fai12";
     let key = CryptoJS.enc.Utf8.parse(keyStr);
@@ -15,7 +15,7 @@ export default {
     });
     return encrypted.toString();
   },
-  decrypt(word: String, keyStr: String, ivStr: String) {
+  decrypt(word: string, keyStr: string, ivStr: string) {
     keyStr = keyStr ? keyStr : "absoietlj32fai12";
     ivStr = ivStr ? ivStr : "absoietlj32fai12";
     var key = CryptoJS.enc.Utf8.parse(keyStr);

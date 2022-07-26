@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import Login from '@/views/login/index.vue'
 import Layout from '@/layout/index.vue'
 import Dashboard from '@/views/dashboard/index.vue'
@@ -33,10 +33,13 @@ const routes = [
   },
 ];
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
 });
 router.beforeEach((to: any, from, next) => {
+  if (to.path === "/") {
+    router.push("/dashboard");
+  }
   document.title = to.meta.title;
   next();
 })

@@ -3,11 +3,11 @@
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
       <div class="logo">Demo</div>
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
-        <a-menu-item key="1" @click="toRouter('dashboard')">
+        <a-menu-item key="/dashboard" @click="toRouter('dashboard')">
           <bar-chart-outlined />
           <span>儀錶板</span>
         </a-menu-item>
-        <a-menu-item key="2" @click="toRouter('data-management')">
+        <a-menu-item key="/data-management" @click="toRouter('data-management')">
           <appstore-outlined />
           <span>數據管理</span>
         </a-menu-item>
@@ -69,6 +69,7 @@ export default defineComponent({
     MenuFoldOutlined,
   },
   setup() {
+    let selectedKeys = ref<string[]>([]);
     let isRouterAlive = ref<boolean>(true);
     const router = useRouter();
     const { cookies } = useCookies();
@@ -85,11 +86,13 @@ export default defineComponent({
       });
       router.push(path);
     };
+    selectedKeys.value = [router.currentRoute.value.path];
+
     return {
       isRouterAlive,
+      selectedKeys,
       userImg,
       userName,
-      selectedKeys: ref<string[]>(["1"]),
       collapsed: ref<boolean>(false),
       toRouter,
     };

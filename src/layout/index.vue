@@ -7,7 +7,10 @@
           <bar-chart-outlined />
           <span>儀錶板</span>
         </a-menu-item>
-        <a-menu-item key="/data-management" @click="toRouter('data-management')">
+        <a-menu-item
+          key="/data-management"
+          @click="toRouter('data-management')"
+        >
           <appstore-outlined />
           <span>數據管理</span>
         </a-menu-item>
@@ -80,6 +83,11 @@ export default defineComponent({
       router.push("/login");
     }
     const toRouter = (path: string) => {
+      if (path === "login") {
+        cookies.remove("ac");
+        cookies.remove("pw");
+        cookies.remove("isRememberLogin");
+      }
       isRouterAlive.value = false;
       nextTick(() => {
         isRouterAlive.value = true;

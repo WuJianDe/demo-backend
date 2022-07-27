@@ -93,7 +93,11 @@ export default defineComponent({
       password: "",
       isRememberLoginData: false,
     });
-    if (cookies.get("ac") && cookies.get("pw")) {
+    if (
+      cookies.get("ac") &&
+      cookies.get("pw") &&
+      cookies.get("isRememberLogin") === "true"
+    ) {
       formData.account = CryptoJS.decrypt(cookies.get("ac"));
       formData.password = CryptoJS.decrypt(cookies.get("pw"));
       formData.isRememberLoginData = true;
@@ -102,9 +106,11 @@ export default defineComponent({
       if (formData.isRememberLoginData) {
         cookies.set("ac", CryptoJS.encrypt(formData.account), "7d");
         cookies.set("pw", CryptoJS.encrypt(formData.password), "7d");
+        cookies.set("isRememberLogin", "true", "7d");
       } else {
-        cookies.remove("ac");
-        cookies.remove("pw");
+        cookies.set("ac", CryptoJS.encrypt(formData.account), "30min");
+        cookies.set("pw", CryptoJS.encrypt(formData.password), "30min");
+        cookies.remove("isRememberLogin");
       }
       router.push("/dashboard");
     };
